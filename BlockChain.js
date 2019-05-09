@@ -13,37 +13,67 @@ class Blockchain {
         this.generateGenesisBlock();
     }
 
-    // Helper method to create a Genesis Block (always with height= 0)
-    // You have to options, because the method will always execute when you create your blockchain
-    // you will need to set this up statically or instead you can verify if the height !== 0 then you
-    // will not create the genesis block
-    generateGenesisBlock(){
-        // Add your code here
+    async generateGenesisBlock(){
+        let count = await this.bd.getBlocksCount();
+        if(count === 0 ) {
+            console.log("Creating Genesis Block");
+            await this.addBlock(new Block.Block("I'm the first block - Genesis"))
+            console.log("Blockchain initialized");
+        }
     }
 
     // Get block height, it is a helper method that return the height of the blockchain
-    getBlockHeight() {
-        // Add your code here
+    async getBlockHeight() {
+        let count = await this.bd.getBlocksCount();
+        return count;
     }
 
-    // Add new block
-    addBlock(block) {
-        // Add your code here
-    }
+    async addBlock(block) {
+        const height = await this.getBlockHeight();
+        block.height = height;
+        block.time = new Date().getTime().toString().slice(0,-3);
+
+        if (block.height > 0) {
+          const previousBlock = await this.getBlock(height-1);
+          block.previousBlockHash = previousBlock.hash;
+        }
+
+        block.hash = this.getBlockHash(block);
+        return await this.persistBlock(block);
+      }
+
 
     // Get Block By Height
-    getBlock(height) {
-        // Add your code here
+    async getBlock(height) {
+        return JSON.parse(await this.bd.getLevelDBData(height));
     }
 
     // Validate if Block is being tampered by Block Height
-    validateBlock(height) {
-        // Add your code here
+    async validateBlock(height) {
+        let block = await this.getBlock(height);
+        let referenceHash = block.hash;
+        block.hash= '';
+        return referenceHash === this.getBlockHash(block);
     }
 
     // Validate Blockchain
-    validateChain() {
-        // Add your code here
+    async validateChain() {
+        let height = await this.getBlockHeight();
+        for (let index = 0; index < height; index++) {
+            if(await this.validateBlock(index)){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    getBlockHash(block){
+        return  SHA256(JSON.stringify(block)).toString();
+    }
+
+    async persistBlock(block){
+        return await this.bd.addLevelDBData(block.height, JSON.stringify(block));
     }
 
     // Utility Method to Tamper a Block for Test Validation

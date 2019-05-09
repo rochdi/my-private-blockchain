@@ -3,7 +3,7 @@
 /===================================================*/
 
 const level = require('level');
-const chainDB = './chaindata';
+const chainDB = './chaindata5';
 
 class LevelSandbox {
 
@@ -13,29 +13,33 @@ class LevelSandbox {
 
     // Get data from levelDB with key (Promise)
     getLevelDBData(key){
-        let self = this;
-        return new Promise(function(resolve, reject) {
-            // Add your code here, remember in Promises you need to resolve() or reject()
-        });
+        return this.db.get(key);
     }
 
     // Add data to levelDB with key and value (Promise)
     addLevelDBData(key, value) {
         let self = this;
-        return new Promise(function(resolve, reject) {
-            // Add your code here, remember in Promises you need to resolve() or reject() 
+        return new Promise((resolve, reject) => {
+          self.db.put(key, value).then(
+            (err) => {
+                err && reject(err);
+                resolve(value);
+            })
         });
     }
 
     // Method that return the height
     getBlocksCount() {
         let self = this;
-        return new Promise(function(resolve, reject){
-            // Add your code here, remember in Promises you need to resolve() or reject()
+        let count = 0;
+        return new Promise((resolve, reject) => {
+            self.db.createReadStream()
+                .on('data', (data) => { count++; })
+                .on('error', (error) => reject())
+                .on('close', () => resolve(count))
+                .on('end', () => resolve(count));
         });
     }
-        
-
 }
 
 module.exports.LevelSandbox = LevelSandbox;
