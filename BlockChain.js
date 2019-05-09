@@ -56,15 +56,28 @@ class Blockchain {
         return referenceHash === this.getBlockHash(block);
     }
 
+    async validateLinkForBlock(height){
+        if(height === 0) {return true;}
+
+        let block = await this.getBlock(height);
+        let previousBlock = await this.getBlock(height-1);
+        return block.previousBlock === previousBlock.hash;
+    }
+
     // Validate Blockchain
     async validateChain() {
         let height = await this.getBlockHeight();
+        
         for (let index = 0; index < height; index++) {
-            if(await this.validateBlock(index)){
+            if(! await this.validateBlock(index)){
+                return false;
+            }
+
+            if(! await this.validateLinkForBlock(index)){
                 return false;
             }
         }
-
+        
         return true;
     }
 

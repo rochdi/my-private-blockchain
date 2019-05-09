@@ -3,7 +3,7 @@
 /===================================================*/
 
 const level = require('level');
-const chainDB = './chaindata5';
+const chainDB = './chaindata';
 
 class LevelSandbox {
 
