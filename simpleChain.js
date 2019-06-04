@@ -7,16 +7,17 @@ const Block = require('./Block.js');
 
 let myBlockChain = new BlockChain.Blockchain();
 
-/*
+
+
 setTimeout(function () {
 	console.log("Waiting...")
 }, 10000);
-*/
+
 
 /******************************************
  ** Function for Create Tests Blocks   ****
  ******************************************/
-/*
+
 
 (function theLoop (i) {
 	setTimeout(function () {
@@ -30,7 +31,6 @@ setTimeout(function () {
 	}, 10000);
   })(0);
 
-*/
 /***********************************************
  ** Function to get the Height of the Chain ****
  ***********************************************/
@@ -109,6 +109,7 @@ myBlockChain.getBlock(6).then((block) => {
 
 // Be careful this only will work if `validateChain` method in Blockchain.js file return a Promise
 
+/*
 myBlockChain.validateChain().then((errorLog) => {
 	if(errorLog.length > 0){
 		console.log("The chain is not valid:");
@@ -121,5 +122,6 @@ myBlockChain.validateChain().then((errorLog) => {
 })
 .catch((error) => {
 	console.log(error);
-})
+}) 
 
+*/
