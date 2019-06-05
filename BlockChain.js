@@ -81,7 +81,7 @@ class Blockchain {
         return true;
     }
 
-    getBlockHash = (block) => { return SHA256(JSON.stringify(block)).toString()};
+    getBlockHash(block) { return SHA256(JSON.stringify(block)).toString()};
 
     async persistBlock(block){
         return await this.bd.addLevelDBData(block.height, JSON.stringify(block));
