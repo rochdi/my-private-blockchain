@@ -26,6 +26,12 @@ class BlockAPI {
      * Initilization of the Express framework
      */
 	initExpress() {
+//        this.test = [];
+//        this.test["test"] =  setTimeout(function(){console.log("hoho")},3000);
+//        console.log("#####");
+//        console.log(this.test);
+//        console.log("#####");
+//        clearTimeout(this.test["test"]);
 		this.app.set("port", 8000);
 	}
 

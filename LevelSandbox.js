@@ -40,6 +40,22 @@ class LevelSandbox {
                 .on('end', () => resolve(count));
         });
     }
+
+    getBlocksForPredicate(predicate) {
+        let self = this;
+        let result = [];
+        return new Promise((resolve, reject) => {
+            self.db.createReadStream()
+                .on('data', (data) => { 
+                    if(predicate(data)){
+                        result.push(data.value);
+                    }
+                 })
+                .on('error', (error) => reject())
+                .on('close', () => resolve(result))
+                .on('end', () => resolve(result));
+        });
+    }
 }
 
 module.exports.LevelSandbox = LevelSandbox;
