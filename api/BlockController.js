@@ -41,7 +41,7 @@ class BlockController {
                 let newBlock = new BlockClass.Block(content);
                 let block = await this.blockChain.addBlock(newBlock);
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify(block));
+                res.end(block);
             } else {
                 res.status(404)
                 .send('Invalid block content');
