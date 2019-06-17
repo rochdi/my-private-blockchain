@@ -29,7 +29,7 @@ To setup the project for review do the following:
     "time": "1560088428"
 }
 ```
-2. get all blocks for a wallet GET http://localhost:8000/wallet/[key]
+2. get all blocks for a wallet GET http://localhost:8000/stars/address:[ADDRESS]
 ```
 [
     {
@@ -88,7 +88,7 @@ To setup the project for review do the following:
     "storyDecoded": "Found star using https://www.google.com/sky/"
 }
 ```
-4. get star by its block hash http://localhost:8000/stars/hash/[blockhash]
+4. get star by its block hash http://localhost:8000/stars/hash:[blockhash]
 
 ```
 {
@@ -118,7 +118,7 @@ To setup the project for review do the following:
 }
 ```
 
-6.  validate a the request with a signature:  localhost:8000/validate
+6.  validate a the request with a signature:  localhost:8000/message-signature/validate
 
 ```
 {
