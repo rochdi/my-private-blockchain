@@ -73,15 +73,15 @@ class BlockController {
 
     addARequestValidation(){
         this.app.post("/requestValidation", (req, res) => { 
-            var requestObject = this.mempool.setTimeout(req.body.address);
+            let requestObject = this.mempool.setTimeout(req.body.address);
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(requestObject));
          });
     }
 
     validateRequestByWallet(){
-        this.app.post("/validate", (req, res) => { 
-            var validationResult = this.mempool.validateRequest(req.body);
+        this.app.post("/message-signature/validate", (req, res) => { 
+            let validationResult = this.mempool.validateRequest(req.body);
             if(!validationResult){
                 res.status(400)
                 .send('Invalid signature or a stale address request');
@@ -93,10 +93,10 @@ class BlockController {
     }
 
     getBlockByWalletAddress(){ 
-        this.app.get("/wallet/:key", async (req, res) => {
+        this.app.get("/stars/address:key", async (req, res) => {
             let walletPredicate = (block) => JSON.parse(block.value).body.address == req.params.key;
-            var blocks = await this.blockChain.getBlocksForPredicate(walletPredicate);
-            var result = [];
+            let blocks = await this.blockChain.getBlocksForPredicate(walletPredicate);
+            let result = [];
             blocks.forEach(block => {
                 block.body.star = {...block.body.star,"storyDecoded":hex2ascii(block.body.star.story)}
             });
@@ -106,16 +106,21 @@ class BlockController {
     }
 
     getStarByBlockHash(){
-        this.app.get("/stars/hash/:hash", async (req, res) => {
+        this.app.get("/stars/hash:hash", async (req, res) => {
             let blockHashPredicate = (block) => JSON.parse(block.value).hash == req.params.hash;
-            var blocks = await this.blockChain.getBlocksForPredicate(blockHashPredicate);
+            let blocks = await this.blockChain.getBlocksForPredicate(blockHashPredicate);
             if(blocks.length == 0){
                 res.status(404)
                     .send('Not found');
             } else {
-                if(blocks[0].body.star){
+                if(blocks[0]){
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify({...blocks[0].body.star,"storyDecoded":hex2ascii(blocks[0].body.star.story)}));
+                    res.end(JSON.stringify(
+                        {...blocks[0],
+                             body: {...blocks[0].body,
+                                 star: {...blocks[0].body.star,"storyDecoded":hex2ascii(blocks[0].body.star.story)}
+                                }
+                        }));    
                 } else {
                     res.status(404)
                         .send(`No star shining in this block ${req.params.hash}`);
