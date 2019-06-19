@@ -16,8 +16,8 @@ class BlockController {
         this.mempool = new MempoolClass.Mempool();
         this.getBlockByIndex();
         this.getStarByBlockHash();
-        this.getStarByBlockHeight();
         this.getBlockByWalletAddress(); 
+        this.getStarByBlockHeight();
         this.postNewBlock();
         this.addARequestValidation();
         this.validateRequestByWallet();
@@ -93,7 +93,9 @@ class BlockController {
     }
 
     getBlockByWalletAddress(){ 
-        this.app.get("/stars/address:key", async (req, res) => {
+        this.app.get("/stars/address::key", async (req, res) => {
+            console.log("###########2");
+            console.log(req.params.key);
             let walletPredicate = (block) => JSON.parse(block.value).body.address == req.params.key;
             let blocks = await this.blockChain.getBlocksForPredicate(walletPredicate);
             let result = [];
@@ -101,12 +103,12 @@ class BlockController {
                 block.body.star = {...block.body.star,"storyDecoded":hex2ascii(block.body.star.story)}
             });
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(blocks));
+            res.end(JSON.stringify(blocks)); 
         })
     }
 
     getStarByBlockHash(){
-        this.app.get("/stars/hash:hash", async (req, res) => {
+        this.app.get("/stars/hash::hash", async (req, res) => {
             let blockHashPredicate = (block) => JSON.parse(block.value).hash == req.params.hash;
             let blocks = await this.blockChain.getBlocksForPredicate(blockHashPredicate);
             if(blocks.length == 0){
